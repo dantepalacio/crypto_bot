@@ -51,11 +51,11 @@ def generate_gpu(text):
     with torch.autocast('cuda', dtype=torch.float16):
         inputs = tokenizer(prompt, return_tensors="pt").to('cuda')
         outputs = model.generate(**inputs,
-                                 max_new_tokens = 2048,
+                                 max_length = 3000,
                                  eos_token_id = tokenizer.eos_token_id,
                                  pad_token_id = tokenizer.eos_token_id,
-                                 temperature = 0.5,
-                                 min_new_tokens = 256
+                                 temperature = 0.2,
+                                 min_length = 256,
                                  )
         final_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True, num_beans=1)[0]
         final_outputs = cut_off_text(final_outputs, '</s>')

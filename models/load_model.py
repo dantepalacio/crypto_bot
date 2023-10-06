@@ -56,9 +56,8 @@ def load_model():
         # quantization_config=bnb_config,
         load_in_4bit=True,
         torch_dtype=torch.float16,
-        device_map="cuda", 
+        device_map="auto", 
         use_auth_token = HF_TOKEN,
-        offload_folder="offload",
     )
     print('Модель скачалась')
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_auth_token=HF_TOKEN)
