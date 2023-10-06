@@ -2,7 +2,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from dotenv import load_dotenv
 import os
-
+from peft import AutoPeftModelForCausalLM
 
 from optimization.bnb_config import create_bnb_config
 
@@ -48,7 +48,7 @@ load_dotenv()
 HF_TOKEN = os.environ.get('HF_TOKEN')
 
 MODEL_NAME = "OpenBuddy/openbuddy-llama2-13b-v8.1-fp16"
-
+MY_MODEL = "dantepalacio/llama-output"
 
 def load_model():
     model = AutoModelForCausalLM.from_pretrained(
