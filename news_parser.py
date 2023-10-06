@@ -337,19 +337,17 @@ from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 import csv
 
-serv = Service(executable_path="C:\\Users\\m4rkness\\Docs\\Unik\\2023-2024\\database\\project(crypto)\\bitcoin_news(parser)\\chromedriver.exe")
+serv = Service(executable_path="C:\\Users\\m4rkness\\Docs\\Unik\\2023-2024\\database\\project(crypto)\\bitcoin_news(parser)\\parser\\chromedriver.exe")
 driver = webdriver.Chrome(service=serv)
 
 try:
     driver.maximize_window()
     driver.get("https://cryptorank.io/news/bitcoin")
     
-    delay = random.uniform(2, 5)
+    delay = random.uniform(2, 4)
     time.sleep(delay)
 
     article_links = []
-
-    print(article_links)
 
     previous_article_count = 0
 
@@ -366,12 +364,13 @@ try:
 
         # Скроллим страницу вниз, чтобы открыть следующую порцию статей
         driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.PAGE_DOWN)
-        time.sleep(3)  # Подождите, чтобы контент подгрузился
+        time.sleep(delay)  # Подождите, чтобы контент подгрузился
 
         # Если не найдено больше статей, завершаем цикл
         current_article_count = len(article_links)
         print(current_article_count)
-        if current_article_count == previous_article_count or current_article_count == 1000:
+    
+        if current_article_count == previous_article_count or current_article_count >= 5000:
             break
 
     with open("crypto_news.csv", "w", newline="", encoding="utf-8") as csvfile:
@@ -387,24 +386,22 @@ try:
                 # Извлекаем заголовок статьи
 
                 title = article_soup.find('h1', class_="huQzNi").text
-                print('\n')
-                print('Заголовок: ', title)
-                print('\n')
+                # print('\n')
+                # print('Заголовок: ', title)
+                # print('\n')
 
                 content_elements = article_soup.find_all("p")
                 
                 content = "\n".join([content.get_text() for content in content_elements])
 
-                print('\n')
-                print("Содержание: ", content)
-                print('\n')
+                # print('\n')
+                # print("Содержание: ", content)
+                # print('\n')
                 csv_writer.writerow([title, content])
 
-                delay = random.uniform(2, 5)
                 time.sleep(delay)
 
                 
-
             except Exception as ex:
                 print(f'Не удалось получить доступ к статье: {article_link}')
                 print(f'Ошибка: {str(ex)}') 
