@@ -1,12 +1,54 @@
 const puppeteer = require("puppeteer");
 const fs = require("fs");
-const { log } = require("console");
+const { log, error } = require("console");
 
-async function parseAndWriteToCsv(articleLink, csvWriter) {
-    console.log(articleLink);
+// db
+const { Client } = require("pg");
+
+const connectionParams = {
+    user: "postgres",
+    host: "localhost",
+    database: "postgres",
+    password: "Qwertyu123451!",
+    port: 5432
+};
+
+
+// client.connect()
+//     .then(() => {
+//         console.log("DB Connected!");
+// })
+//     .catch(error => {
+//         console.log(`Error: ${error}`);
+// })
+//     .finally(() => {
+//         client.end();
+// });
+
+
+const client = new Client(connectionParams);
+
+
+async function insertToDataBase(title, content) {
+    try {
+        console.log("Вход в базу данных...");
+
+        // await client.connect();
+        const query = "INSERT INTO news (title, content) VALUES ($1, $2)";
+        const values = [title, content];
+        await client.query(query, values);
+
+    } catch (error) {
+        console.log("Ошибка при загрузке данных в бд: ", error);
+    }
+}
+
+
+
+async function parseAndInsertToDataBase(articleLink) {
     try {
         const browser = await puppeteer.launch({
-            headless: false
+            headless: "new"
         });
         const page = await browser.newPage();
         await page.goto(articleLink);
@@ -21,10 +63,11 @@ async function parseAndWriteToCsv(articleLink, csvWriter) {
 
         console.log("Содержание: ", content);
         console.log("\n");
-
-        csvWriter.write([title, content]);
-
+        
+        await insertToDataBase(title, content);
+        
         await browser.close();
+        
 
     } catch (ex) {
         console.error(`Не удалось получить доступ к статье: ${articleLink}`);
@@ -32,15 +75,48 @@ async function parseAndWriteToCsv(articleLink, csvWriter) {
     }
 }
 
+
+// async function parseAndWriteToCsv(articleLink, csvWriter) {
+//     console.log(articleLink);
+//     try {
+//         const browser = await puppeteer.launch({
+//             headless: "new"
+//         });
+//         const page = await browser.newPage();
+//         await page.goto(articleLink);
+
+//         const title = await page.$eval("h1.huQzNi", (element) => element.textContent);
+
+//         console.log("\n");
+//         console.log("Заголовок: ", title);
+
+//         const contentElements = await page.$$eval('p', (elements) => elements.map((element) => element.textContent));
+//         const content = contentElements.join("\n");
+
+//         console.log("Содержание: ", content);
+//         console.log("\n");
+
+//         csvWriter.write([title, content]);
+
+//         await browser.close();
+
+//     } catch (ex) {
+//         console.error(`Не удалось получить доступ к статье: ${articleLink}`);
+//         console.error(`Ошибка: ${ex}`);
+//     }
+// }
+
 async function main() {
     try {
         const browser = await puppeteer.launch({
-            headless: false
+            headless: "new"
         });
         const page = await browser.newPage();
         await page.goto('https://cryptorank.io/news/bitcoin');
 
         const articleLinks = new Set();
+
+        await client.connect();
         // while (true) {
         //     // const newLinksFound = false;
         //     const articleElements = await page.$$('div.sc-2cd471ac-3');
@@ -60,8 +136,8 @@ async function main() {
         //     }
 
 
-        const currentArticleCount = articleLinks.size;
-        let previousArticleCount = 0;
+
+
 
         while (true) {
 
@@ -82,24 +158,31 @@ async function main() {
             }
 
             try {
-                const showMoreButton = await page.waitForSelector('button.sc-4ebbd3ae-1.YYMJ.sc-7947ae-3.dxRVKk', {timeout: 3000});
+                const showMoreButton = await page.waitForSelector('button.sc-4ebbd3ae-1.YYMJ.sc-7947ae-3.dxRVKk', { timeout: 3000 });
                 await showMoreButton.click();
 
             } catch (error) {
                 console.error('Кнопка "Show more news" не найдена или не кликнута.');
                 console.error(`Ошибка: ${error}`);
             }
-        
-            
+
+
+
+
             await new Promise(page => setTimeout(page, 5000));
 
-            if (currentArticleCount >= 100) {
-                // console.log("Статьи закончились!");
+            const articleLinksSize = articleLinks.size;
+
+            if (articleLinksSize >= 10) {
                 break;
             }
+            // if (currentArticleCount >= 30) {
+            //     // console.log("Статьи закончились!");
+            //     break;
+            // }
         }
-        
-            
+
+
 
         // await new Promise(page => setTimeout(page, 5000));
 
@@ -117,13 +200,16 @@ async function main() {
         csvWriter.write("Title;Content\n");
 
         for (const articleLink of articleLinks) {
-            await parseAndWriteToCsv(articleLink, csvWriter);
+            // await parseAndWriteToCsv(articleLink, csvWriter);
             // await page.waitForTimeout(Math.floor(Math.random() * 2000) + 3000);
+
+            await parseAndInsertToDataBase(articleLink);
             await new Promise(page => setTimeout(page, Math.floor(Math.random() * 2000) + 3000));
         }
 
+        await client.end();
         await browser.close();
-        
+
 
 
     } catch (ex) {
