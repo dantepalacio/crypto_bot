@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mainpage</title>
+    
+</head>
+<body>
+    <h1>scripts</h1>
+    {% comment %}
+    <!-- <form method="post" action="{% url 'start_scheduler' %}">
+        {% csrf_token %}
+        <button type="submit">Start Scheduler</button>
+    </form>
+    <form method="post" action="{% url 'stop_scheduler' %}">
+        {% csrf_token %}
+        <button type="submit">Stop Scheduler</button>
+    </form> -->
+    <!-- <form method="post" action="{% url 'parse_news' %}">
+        {% csrf_token %}
+        <button type="submit">Start Parsing</button>
+    </form> -->
+    {% endcomment %} 
+
+    <a href="{% url 'run_puppeteer' %}">Go to Puppeteer</a>
+</body>
+</html>
