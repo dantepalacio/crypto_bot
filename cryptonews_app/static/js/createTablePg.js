@@ -18,8 +18,10 @@ async function createTable() {
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS news (
                 id serial PRIMARY KEY,
+                crypto_name TEXT,
                 title TEXT,
-                content TEXT
+                content TEXT,
+                url TEXT
             );
         `;
 
