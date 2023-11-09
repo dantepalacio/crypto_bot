@@ -1,0 +1,21 @@
+<!-- news.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Криптоновости</title>
+</head>
+<body>
+    <h1>Криптоновости</h1>
+    <ul>
+        {% for item in news %}
+            <h1>{{ item.crypto_name }}</h1>
+            
+            <h3>{{ item.title }}</h3>
+
+            <p>
+                {{item.content}}
+            </p>
+        {% endfor %}
+    </ul>
+</body>
+</html>

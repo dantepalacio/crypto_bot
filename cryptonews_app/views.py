@@ -2,7 +2,9 @@ from django.core.management import call_command
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 # from cryptonews_app.task import run_selenium_task
+from .models import CryptoNews
 import subprocess
+import psycopg2
 
 def home(request):
     return render(request, 'home.html')
@@ -32,3 +34,29 @@ def run_puppeteer(request):
         error_message = f"Найдена ошибка: {str(e)}"
         return HttpResponse(error_message, status=500)
     
+
+def get_news_from_db(request):
+    conn = psycopg2.connect(
+        user = "postgres",
+        password = "Qwertyu123451!",
+        host = "localhost",
+        database = "postgres",
+        port = 5432
+    )
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM news")
+    
+    news = []
+    for item in cursor.fetchall():
+        news_item = {
+            "id": item[0],
+            "crypto_name": item[1],
+            "title": item[2],
+            "content": item[3],
+        }
+        news.append(news_item)
+
+    conn.close()
+
+    return render(request, "news_from_pg.html", {"news": news})

@@ -8,13 +8,12 @@ class SchedulerInterval(models.Model):
     
 
 class CryptoNews(models.Model):
+    crypto_name = models.CharField(max_length=200, null=True)
     title = models.CharField(max_length=200)
     content = models.TextField()
-    pub_date = models.DateTimeField("Date published")
-
+    
     def __str__(self):
         return self.title
-
 
 
 

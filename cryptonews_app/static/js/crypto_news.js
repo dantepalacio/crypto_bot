@@ -219,7 +219,7 @@ async function main() {
     }
 }
 
-cron.schedule("38 * * * *", async () => {
+cron.schedule("0 * * * *", async () => {
     console.log("Запуск скрипта (1 круг)...")
     await new Promise(page => setTimeout(page, 5000));
 

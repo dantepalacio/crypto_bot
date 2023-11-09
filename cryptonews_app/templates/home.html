@@ -20,7 +20,35 @@
         <button type="submit">Start Parsing</button>
     </form> -->
     {% endcomment %} 
+    <div class="btn">
+        <li>
+            <ul>
+                <a href="{% url 'run_puppeteer' %}">Go to Puppeteer</a>
+            </ul>
+            <ul>
+                <a href="{% url 'get_news' %}">Get News For DB</a>
+            </ul>
+        </li>
+    </div>
 
-    <a href="{% url 'run_puppeteer' %}">Go to Puppeteer</a>
+    <style>
+        .btn {
+            display: inline-block;
+        }
+        a {
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            font-family: "Arial";
+            background-color: #38098f;
+            padding: 5px 12px;
+            border-radius: 30px;
+        }
+
+        ul {
+            list-style-type: none;
+        }
+    </style>
 </body>
 </html>

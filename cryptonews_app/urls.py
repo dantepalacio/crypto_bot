@@ -8,4 +8,5 @@ urlpatterns = [
 
     # path('parse_news/', views.parse_and_save_news, name='parse_news'),
     path('run_puppeteer/', views.run_puppeteer, name='run_puppeteer'),
+    path("get_news/", views.get_news_from_db, name="get_news"),
 ]
