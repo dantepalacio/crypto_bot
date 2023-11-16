@@ -176,3 +176,10 @@ yarn.lock
 # Игнорирование временных файлов (например, core dumps)
 core
 .dS_Store
+
+
+node_modules/
+package-lock.json
+.env
+dist/
+logs/

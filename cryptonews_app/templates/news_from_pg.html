@@ -15,7 +15,17 @@
             <p>
                 {{item.content}}
             </p>
+
+            <h3>URL: <a class="news_link" href="{{item.url}}">{{item.url}}</a></h3>
+
+            {{item.time}}
         {% endfor %}
     </ul>
+
+    <style>
+        .news_link {
+            text-decoration: none;
+        }
+    </style>
 </body>
 </html>

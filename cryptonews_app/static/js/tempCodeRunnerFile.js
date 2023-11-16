@@ -1,9 +1,10 @@
 const puppeteer = require("puppeteer");
 const fs = require("fs");
+
 const readline = require("readline");
+
 const cron = require("node-cron");
 const { log, error } = require("console");
-
 
 const r1 = readline.createInterface({
     input: process.stdin,
@@ -24,7 +25,7 @@ const connectionParams = {
 const client = new Client(connectionParams);
 
 
-async function insertToDataBase(cryptoName, title, content, articleLink, astanaTime) {
+async function insertToDataBase(cryptoName, title, content, articleLink) {
     try {
         
         console.log("Вход в БД!");
@@ -35,8 +36,8 @@ async function insertToDataBase(cryptoName, title, content, articleLink, astanaT
             console.log("Статья уже есть в БД");
         }
         else {
-            const query = "INSERT INTO news (crypto_name, title, content, URL, time) VALUES ($1, $2, $3, $4, $5)";
-            const values = [cryptoName, title, content, articleLink, astanaTime];
+            const query = "INSERT INTO news (crypto_name, title, content, URL) VALUES ($1, $2, $3, $4)";
+            const values = [cryptoName, title, content, articleLink];
             await client.query(query, values);           
             console.log("Данные успешно добавлены в БД!")
         }
@@ -72,14 +73,8 @@ async function parseAndInsertToDataBase(articleLink, cryptoName) {
 
         console.log("Содержание: ", content);
         console.log("\n");
-
-        const astanaTimeZone = "Asia/Almaty";
-        const currentDateTime = new Date();
-        const options = {timeZone: astanaTimeZone, hour12:false, year: "numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", second: "2-digit"};
-        const astanaTime = currentDateTime.toLocaleString('en-US', options);
-
         
-        await insertToDataBase(cryptoName, title, content, articleLink, astanaTime);
+        await insertToDataBase(cryptoName, title, content, articleLink);
         
         await browser.close();
         
@@ -223,7 +218,7 @@ async function main() {
     }
 }
 
-cron.schedule("32 * * * *", async () => {
+cron.schedule("15 * * * *", async () => {
     console.log("Запуск скрипта (1 круг)...")
     await new Promise(page => setTimeout(page, 5000));
 

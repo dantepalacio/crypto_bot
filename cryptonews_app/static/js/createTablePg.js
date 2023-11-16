@@ -21,7 +21,8 @@ async function createTable() {
                 crypto_name TEXT,
                 title TEXT,
                 content TEXT,
-                url TEXT
+                url TEXT,
+                time TEXT
             );
         `;
 

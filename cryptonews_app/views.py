@@ -54,6 +54,8 @@ def get_news_from_db(request):
             "crypto_name": item[1],
             "title": item[2],
             "content": item[3],
+            "url": item[4],
+            "time": item[5]
         }
         news.append(news_item)
 
